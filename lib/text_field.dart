@@ -2,6 +2,53 @@ import 'package:flutter/material.dart';
 
 enum SmartTextType { H1, T, QUOTE, BULLET }
 
+class SmartTextField extends StatelessWidget {
+  const SmartTextField(
+      {Key? key,
+      required this.type,
+      required this.controller,
+      required this.focusNode})
+      : super(key: key);
+
+  final SmartTextType type;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+        controller: controller,
+        focusNode: focusNode,
+        autofocus: true,
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        cursorColor: Colors.teal,
+        textAlign: type.align,
+        decoration: InputDecoration(
+            hintText: (type) {
+              switch (type) {
+                case SmartTextType.H1:
+                  return 'Chapter Title';
+                  break;
+                case SmartTextType.QUOTE:
+                  return 'Quote';
+                  break;
+                case SmartTextType.BULLET:
+                  return 'Bullet';
+                  break;
+                default:
+                  return 'Body Text';
+              }
+            }(type),
+            border: InputBorder.none,
+            prefixText: type.prefix,
+            prefixStyle: type.textStyle,
+            isDense: true,
+            contentPadding: type.padding),
+        style: type.textStyle);
+  }
+}
+
 extension SmartTextStyle on SmartTextType {
   TextStyle get textStyle {
     switch (this) {
@@ -47,37 +94,5 @@ extension SmartTextStyle on SmartTextType {
         break;
       default:
     }
-  }
-}
-
-class SmartTextField extends StatelessWidget {
-  const SmartTextField(
-      {Key? key,
-      required this.type,
-      required this.controller,
-      required this.focusNode})
-      : super(key: key);
-
-  final SmartTextType type;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-        controller: controller,
-        focusNode: focusNode,
-        autofocus: true,
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        cursorColor: Colors.teal,
-        textAlign: type.align,
-        decoration: InputDecoration(
-            border: InputBorder.none,
-            prefixText: type.prefix,
-            prefixStyle: type.textStyle,
-            isDense: true,
-            contentPadding: type.padding),
-        style: type.textStyle);
   }
 }

@@ -1,8 +1,6 @@
 import 'package:bookcopilot/text_field.dart';
 import 'package:flutter/material.dart';
 
-enum SmartTextType { H1, T, QUOTE, BULLET }
-
 class TextEditor extends StatelessWidget {
   TextEditor({super.key});
 
