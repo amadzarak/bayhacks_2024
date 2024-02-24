@@ -1,4 +1,4 @@
-import 'package:bookcopilot/editor.dart';
+import 'package:bookcopilot/editor_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_editable_textinput/format_markdown.dart';
@@ -95,7 +95,7 @@ class NavigationHeader extends StatelessWidget {
         TextButton(
             onPressed: () {
               Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => EditorBody()));
+                  .push(MaterialPageRoute(builder: (context) => TextEditor()));
             },
             child: Text('Author')),
         IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart))
