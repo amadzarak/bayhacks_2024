@@ -1,4 +1,4 @@
-/*import 'package:bookcopilot/prompt_history.dart';
+import 'package:bookcopilot/prompt_history.dart';
 import 'package:bookcopilot/text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +30,11 @@ class TextEditor extends StatelessWidget {
         body: SafeArea(
             child: Row(children: [
       Expanded(
+          flex: 1,
+          child: Container(
+              color: const Color.fromARGB(255, 255, 233, 232),
+              child: PromptHistory())),
+      Expanded(
           flex: 3,
           child: Column(children: [
             Expanded(
@@ -43,12 +48,6 @@ class TextEditor extends StatelessWidget {
                           focusNode: state[index]['nodeAt']);
                     })),
           ])),
-      Expanded(
-          flex: 1,
-          child: Container(
-              color: const Color.fromARGB(255, 255, 233, 232),
-              child: PromptHistory()))
     ])));
   }
 }
-*/

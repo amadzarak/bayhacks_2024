@@ -1,4 +1,4 @@
-import 'package:bookcopilot/editor_redux.dart';
+import 'package:bookcopilot/edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_editable_textinput/format_markdown.dart';
