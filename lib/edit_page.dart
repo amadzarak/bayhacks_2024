@@ -135,6 +135,7 @@ class _TextEditorState extends State<TextEditor> {
                         // get all the matches:
                         Iterable matches = re.allMatches(paragraphText);
 
+                        List APIResponse = [];
                         //  Iterate all matches:
                         for (Match m in matches) {
                           String? match = m.group(0);
@@ -149,20 +150,17 @@ class _TextEditorState extends State<TextEditor> {
                           });
 
                           var response = await request.send();
-                          print('Response status: ${response.statusCode}');
-                          print(
-                              'Response body: ${await response.stream.bytesToString()}');
+
+                          APIResponse.add(
+                              await response.stream.bytesToString());
                         }
 
                         showModalSideSheet(
                           context,
                           header: 'Edit Profile',
-                          body: Column(
-                            children: [
-                              for (var x in displaySentences)
-                                Row(children: [Text('$x\n')])
-                            ],
-                          ),
+                          body: Column(children: [
+                            for (var x in APIResponse) Text(x.toString()),
+                          ]),
                           addBackIconButton: true,
                           addActions: true,
                           addDivider: true,
