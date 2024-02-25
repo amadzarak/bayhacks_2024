@@ -33,9 +33,10 @@ dependencies:
   markdown_editable_textinput:
     git:
       url: https://github.com/playmoweb/markdown-editable-textinput
-  
-
-
+  side_sheet_material3:
+    git:
+      url: https://github.com/amadzarak/side_sheet_material3
+  http: 1.1.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

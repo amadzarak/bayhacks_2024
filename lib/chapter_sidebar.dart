@@ -31,11 +31,13 @@ class _ChapterSidebarState extends State<ChapterSidebar> {
       Expanded(
           child: ListView.builder(
         shrinkWrap: true,
-        itemCount: widget.chapters.length - 1,
+        itemCount: widget.chapters.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(widget.chapters[index][0]['nodes'][0]['textAt'].text
-                .toString()),
+            title: (widget.chapters[index][0]['nodes'][0]['textAt'].text == '')
+                ? Text('New Chapter')
+                : Text(widget.chapters[index][0]['nodes'][0]['textAt'].text
+                    .toString()),
             onTap: () {
               widget.onSwitch!(index);
             },

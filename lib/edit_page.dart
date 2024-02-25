@@ -1,7 +1,13 @@
 import 'package:bookcopilot/chapter_sidebar.dart';
-
+import 'package:side_sheet_material3/side_sheet_material3.dart';
 import 'package:bookcopilot/text_field.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+
+var url = Uri.https('example.com', 'whatsit/create');
+
+Random rnd = Random();
 
 class TextEditor extends StatefulWidget {
   TextEditor({super.key});
@@ -49,7 +55,7 @@ class _TextEditorState extends State<TextEditor> {
   ];
   List<Map<dynamic, dynamic>> defaultMap = [
     {
-      'title': 'Chapter Title',
+      'key': rnd,
       'nodes': [
         {
           'typeAt': SmartTextType.H1,
@@ -96,11 +102,13 @@ class _TextEditorState extends State<TextEditor> {
               child: ChapterSidebar(
                 chapters: chapters,
                 onSwitch: (index) {
+                  print(index);
                   setState(() {
                     _index = index;
                   });
                 },
                 onAdd: () {
+                  print(chapters);
                   setState(() {
                     chapters.add(defaultMap);
                   });
@@ -109,10 +117,74 @@ class _TextEditorState extends State<TextEditor> {
       Expanded(
           flex: 3,
           child: Column(children: [
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  ElevatedButton(onPressed: () {}, child: Text('Continue')),
+                  ElevatedButton(onPressed: () {}, child: Text('Complete')),
+                  ElevatedButton(onPressed: () {}, child: Text('Other API')),
+                  ElevatedButton(
+                      onPressed: () async {
+                        var displaySentences = [];
+                        var paragraphText =
+                            chapters[_index][0]['nodes'][1]['textAt'].text;
+                        print(paragraphText);
+                        RegExp re = new RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
+
+                        // get all the matches:
+                        Iterable matches = re.allMatches(paragraphText);
+
+                        //  Iterate all matches:
+                        for (Match m in matches) {
+                          String? match = m.group(0);
+                          print("match: $match");
+                          displaySentences.add(match);
+                          var request = http.Request(
+                              'GET',
+                              Uri.parse(
+                                  'https://idir.uta.edu/claimbuster/api/v2/query/knowledge_bases/${match}'));
+                          request.headers.addAll({
+                            "x-api-key": '071f0b216bff4d1cb74922a83381eda9'
+                          });
+
+                          var response = await request.send();
+                          print('Response status: ${response.statusCode}');
+                          print(
+                              'Response body: ${await response.stream.bytesToString()}');
+                        }
+
+                        showModalSideSheet(
+                          context,
+                          header: 'Edit Profile',
+                          body: Column(
+                            children: [
+                              for (var x in displaySentences)
+                                Row(children: [Text('$x\n')])
+                            ],
+                          ),
+                          addBackIconButton: true,
+                          addActions: true,
+                          addDivider: true,
+                          confirmActionTitle: 'Save',
+                          cancelActionTitle: 'Cancel',
+                          confirmActionOnPressed: () {},
+
+                          // If null, Navigator.pop(context) will used
+                          cancelActionOnPressed: () {
+                            // Do something
+                          },
+                          transitionDuration: Duration(milliseconds: 100),
+                        );
+                      },
+                      child: Text('Fact Check'))
+                ],
+              ),
+            ),
             Expanded(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: chapters.length - 1,
+                    itemCount: defaultMap[0].length,
                     itemBuilder: (context, index) {
                       return MouseRegion(
                           onHover: (event) {
