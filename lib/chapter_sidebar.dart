@@ -28,6 +28,9 @@ class _ChapterSidebarState extends State<ChapterSidebar> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+      Row(
+        children: [Text('Outline')],
+      ),
       Expanded(
           child: ListView.builder(
         shrinkWrap: true,
@@ -47,7 +50,7 @@ class _ChapterSidebarState extends State<ChapterSidebar> {
       Row(children: [
         Expanded(
           child: Container(
-              color: Color.fromARGB(255, 245, 239, 255),
+              color: Color.fromARGB(255, 247, 243, 255),
               padding: EdgeInsets.all(10.0),
               child: TextButton(
                   child: Text('+ Add Chapter'), onPressed: widget.onAdd)),

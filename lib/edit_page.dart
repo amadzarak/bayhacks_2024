@@ -82,7 +82,11 @@ class _TextEditorState extends State<TextEditor> {
       Expanded(
           flex: 1,
           child: Container(
-              color: const Color.fromARGB(255, 255, 233, 232),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 255, 245, 245),
+                border:
+                    Border(right: BorderSide(color: Colors.black, width: 1)),
+              ),
               child: ChapterSidebar(
                 chapters: chapters,
                 onSwitch: (index) {
@@ -121,8 +125,8 @@ class _TextEditorState extends State<TextEditor> {
               padding: EdgeInsets.all(10),
               child: Row(
                 children: [
+                  ElevatedButton(onPressed: () {}, child: Text('I\'m Stuck')),
                   ElevatedButton(onPressed: () {}, child: Text('Continue')),
-                  ElevatedButton(onPressed: () {}, child: Text('Complete')),
                   ElevatedButton(onPressed: () {}, child: Text('Other API')),
                   ElevatedButton(
                       onPressed: () async {
@@ -180,40 +184,56 @@ class _TextEditorState extends State<TextEditor> {
                 ],
               ),
             ),
-            Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: chapters[_index][0]['nodes'].length,
-                    itemBuilder: (context, index) {
-                      return MouseRegion(
-                          onHover: (event) {
-                            setState(() {
-                              _hoverColor =
-                                  const Color.fromARGB(255, 251, 255, 255);
-                            });
-                          },
-                          child: Container(
-                              color: _hoverColor,
-                              child: SmartTextField(
-                                  type: chapters[_index][0]['nodes'][index]
-                                      ['typeAt'],
-                                  onAction: () {
-                                    print(chapters[_index][0]['nodes']);
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: chapters[_index][0]['nodes'].length,
+                itemBuilder: (context, index) {
+                  return MouseRegion(
+                      onHover: (event) {
+                        setState(() {
+                          _hoverColor =
+                              const Color.fromARGB(255, 251, 255, 255);
+                        });
+                      },
+                      child: Container(
+                          color: _hoverColor,
+                          child: SmartTextField(
+                              type: chapters[_index][0]['nodes'][index]
+                                  ['typeAt'],
+                              onAction: () {
+                                print(chapters[_index][0]['nodes']);
 
-                                    setState(() {
-                                      chapters[_index][0]['nodes'].add({
-                                        'typeAt': SmartTextType.T,
-                                        'textAt': TextEditingController(),
-                                        'nodeAt': FocusNode(),
-                                      });
-                                    });
-                                    print(chapters[_index][0]['nodes']);
-                                  },
-                                  controller: chapters[_index][0]['nodes']
-                                      [index]['textAt'],
-                                  focusNode: chapters[_index][0]['nodes'][index]
-                                      ['nodeAt'])));
-                    })),
+                                setState(() {
+                                  chapters[_index][0]['nodes'].add({
+                                    'typeAt': SmartTextType.T,
+                                    'textAt': TextEditingController(),
+                                    'nodeAt': FocusNode(),
+                                  });
+                                });
+                                print(chapters[_index][0]['nodes']);
+                              },
+                              controller: chapters[_index][0]['nodes'][index]
+                                  ['textAt'],
+                              focusNode: chapters[_index][0]['nodes'][index]
+                                  ['nodeAt'])));
+                }),
+            Center(
+                child: Card(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                  child: Wrap(
+                    children: [
+                      Text('H2'),
+                      SizedBox(
+                        height: 20,
+                        child: VerticalDivider(
+                            width: 20, thickness: 1, color: Colors.black),
+                      ),
+                      Text('Paragraph')
+                    ],
+                  )),
+            ))
           ])),
     ])));
   }
