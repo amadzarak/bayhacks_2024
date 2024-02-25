@@ -35,7 +35,7 @@ class _ChapterSidebarState extends State<ChapterSidebar> {
         itemBuilder: (context, index) {
           return ListTile(
             title: (widget.chapters[index][0]['nodes'][0]['textAt'].text == '')
-                ? Text('New Chapter')
+                ? Text('Untitled Chapter')
                 : Text(widget.chapters[index][0]['nodes'][0]['textAt'].text
                     .toString()),
             onTap: () {

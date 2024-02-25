@@ -4,6 +4,7 @@ import 'package:bookcopilot/text_field.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 var url = Uri.https('example.com', 'whatsit/create');
 
@@ -35,23 +36,6 @@ class _TextEditorState extends State<TextEditor> {
         ],
       }
     ],
-    [
-      {
-        'title': 'Chapter Title',
-        'nodes': [
-          {
-            'typeAt': SmartTextType.H1,
-            'textAt': TextEditingController(),
-            'nodeAt': FocusNode(),
-          },
-          {
-            'typeAt': SmartTextType.T,
-            'textAt': TextEditingController(),
-            'nodeAt': FocusNode(),
-          }
-        ],
-      }
-    ]
   ];
   List<Map<dynamic, dynamic>> defaultMap = [
     {
@@ -142,41 +126,42 @@ class _TextEditorState extends State<TextEditor> {
                   ElevatedButton(onPressed: () {}, child: Text('Other API')),
                   ElevatedButton(
                       onPressed: () async {
-                        var displaySentences = [];
-                        var paragraphText =
-                            chapters[_index][0]['nodes'][1]['textAt'].text;
-                        print(paragraphText);
-                        RegExp re = new RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
-
-                        // get all the matches:
-                        Iterable matches = re.allMatches(paragraphText);
-
-                        List APIResponse = [];
-                        //  Iterate all matches:
-                        for (Match m in matches) {
-                          String? match = m.group(0);
-                          print("match: $match");
-                          displaySentences.add(match);
-                          var request = http.Request(
-                              'GET',
-                              Uri.parse(
-                                  'https://idir.uta.edu/claimbuster/api/v2/query/knowledge_bases/${match}'));
-                          request.headers.addAll({
-                            "x-api-key": '071f0b216bff4d1cb74922a83381eda9'
-                          });
-
-                          var response = await request.send();
-
-                          APIResponse.add(
-                              await response.stream.bytesToString());
-                        }
-
                         showModalSideSheet(
                           context,
-                          header: 'Edit Profile',
-                          body: Column(children: [
-                            for (var x in APIResponse) Text(x.toString()),
-                          ]),
+                          header: 'Fact Check My Document',
+                          body: FutureBuilder(
+                              future: factCheckRequest(chapters[_index][0]
+                                      ['nodes'][1]['textAt']
+                                  .text),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return ListView.builder(
+                                      itemCount: snapshot.data.length,
+                                      itemBuilder: ((context, index) {
+                                        if (snapshot.data != null) {
+                                          print(snapshot.data);
+                                          Map valueMap =
+                                              jsonDecode(snapshot.data[index]);
+
+                                          print(valueMap.keys.toString());
+                                          print(valueMap);
+                                          return ListTile(
+                                            title: Text(
+                                                valueMap['claim'].toString()),
+                                            subtitle: Text(
+                                                valueMap['justification'][0]
+                                                        ['truth_rating']
+                                                    .toString()),
+                                          );
+                                        }
+                                      }));
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              }),
                           addBackIconButton: true,
                           addActions: true,
                           addDivider: true,
@@ -232,4 +217,33 @@ class _TextEditorState extends State<TextEditor> {
           ])),
     ])));
   }
+}
+
+Future factCheckRequest(String paragraphText) async {
+  var displaySentences = [];
+
+  print(paragraphText);
+  RegExp re = new RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
+
+  // get all the matches:
+  Iterable matches = re.allMatches(paragraphText);
+
+  List APIResponse = [];
+  //  Iterate all matches:
+  for (Match m in matches) {
+    String? match = m.group(0);
+    print("match: $match");
+    displaySentences.add(match);
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://idir.uta.edu/claimbuster/api/v2/query/knowledge_bases/${match}'));
+    request.headers.addAll({"x-api-key": '071f0b216bff4d1cb74922a83381eda9'});
+
+    var response = await request.send();
+
+    APIResponse.add(await response.stream.bytesToString());
+  }
+
+  return APIResponse;
 }
