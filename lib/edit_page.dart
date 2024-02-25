@@ -110,7 +110,23 @@ class _TextEditorState extends State<TextEditor> {
                 onAdd: () {
                   print(chapters);
                   setState(() {
-                    chapters.add(defaultMap);
+                    chapters.add([
+                      {
+                        'chapter_number': chapters.length + 1,
+                        'nodes': [
+                          {
+                            'typeAt': SmartTextType.H1,
+                            'textAt': TextEditingController(),
+                            'nodeAt': FocusNode(),
+                          },
+                          {
+                            'typeAt': SmartTextType.T,
+                            'textAt': TextEditingController(),
+                            'nodeAt': FocusNode(),
+                          }
+                        ],
+                      }
+                    ]);
                   });
                 },
               ))),
