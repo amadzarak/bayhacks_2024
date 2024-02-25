@@ -125,7 +125,72 @@ class _TextEditorState extends State<TextEditor> {
               padding: EdgeInsets.all(10),
               child: Row(
                 children: [
-                  ElevatedButton(onPressed: () {}, child: Text('I\'m Stuck')),
+                  ElevatedButton(
+                      onPressed: () async {
+                        showModalSideSheet(
+                          context,
+                          header: 'Extend my Text',
+                          body: FutureBuilder(
+                              future: extendChapterRequest(chapters[_index][0]
+                                      ['nodes'][1]['textAt']
+                                  .text),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return ListView.builder(
+                                      itemCount: 2,
+                                      itemBuilder: ((context, index) {
+                                        if (snapshot.data != null) {
+                                          print(snapshot.data);
+
+                                          var response =
+                                              jsonDecode(snapshot.data);
+                                          return GestureDetector(
+                                              onTap: () {
+                                                chapters[_index][0]['nodes']
+                                                    .add({
+                                                  'typeAt': SmartTextType.T,
+                                                  'textAt':
+                                                      TextEditingController(),
+                                                  'nodeAt': FocusNode(),
+                                                });
+
+                                                chapters[_index][0]['nodes']
+                                                        .last['textAt']
+                                                        .text =
+                                                    response['context']
+                                                        ['opt${index + 1}'];
+
+                                                Navigator.pop(context);
+                                              },
+                                              child: Card(
+                                                  child: Text(response[
+                                                              'context']
+                                                          ['opt${index + 1}']
+                                                      .toString())));
+                                        }
+                                      }));
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              }),
+                          addBackIconButton: true,
+                          addActions: true,
+                          addDivider: true,
+                          confirmActionTitle: 'Save',
+                          cancelActionTitle: 'Cancel',
+                          confirmActionOnPressed: () {},
+
+                          // If null, Navigator.pop(context) will used
+                          cancelActionOnPressed: () {
+                            // Do something
+                          },
+                          transitionDuration: Duration(milliseconds: 100),
+                        );
+                      },
+                      child: Text('I\'m Stuck')),
                   ElevatedButton(onPressed: () {}, child: Text('Continue')),
                   ElevatedButton(onPressed: () {}, child: Text('Other API')),
                   ElevatedButton(
@@ -266,4 +331,25 @@ Future factCheckRequest(String paragraphText) async {
   }
 
   return APIResponse;
+}
+
+Future extendChapterRequest(String paragraphText) async {
+  final String url = "http://34.224.173.78:8080/extend_chapter";
+
+  Map<String, dynamic> req_body = {"context": paragraphText};
+
+  try {
+    String requestBodyJson = json.encode(req_body);
+
+    final response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json'}, body: requestBodyJson);
+
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+  } catch (e) {
+    print(e);
+  }
+
+  return [];
 }
