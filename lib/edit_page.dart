@@ -61,246 +61,296 @@ class _TextEditorState extends State<TextEditor> {
     'nodeAt': FocusNode(),
   };
 
-  Color _hoverColor = Colors.white;
-
   int _index = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _hoverColor;
+
     _index = 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         //appBar: AppBar(automaticallyImplyLeading: true),
         body: SafeArea(
             child: Row(children: [
-      Expanded(
-          flex: 1,
-          child: Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 245, 245),
-                border:
-                    Border(right: BorderSide(color: Colors.black, width: 1)),
-              ),
-              child: ChapterSidebar(
-                chapters: chapters,
-                onSwitch: (index) {
-                  print(index);
-                  setState(() {
-                    _index = index;
-                  });
-                },
-                onAdd: () {
-                  print(chapters);
-                  setState(() {
-                    chapters.add([
-                      {
-                        'chapter_number': chapters.length + 1,
-                        'nodes': [
+          Expanded(
+              flex: 1,
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                        right: BorderSide(
+                            color: Color.fromRGBO(236, 238, 240, 1), width: 1)),
+                  ),
+                  child: ChapterSidebar(
+                    chapters: chapters,
+                    onSwitch: (index) {
+                      print(index);
+                      setState(() {
+                        _index = index;
+                      });
+                    },
+                    onAdd: () {
+                      print(chapters);
+                      setState(() {
+                        chapters.add([
                           {
-                            'typeAt': SmartTextType.H1,
-                            'textAt': TextEditingController(),
-                            'nodeAt': FocusNode(),
-                          },
-                          {
-                            'typeAt': SmartTextType.T,
-                            'textAt': TextEditingController(),
-                            'nodeAt': FocusNode(),
-                          }
-                        ],
-                      }
-                    ]);
-                  });
-                },
-              ))),
-      Expanded(
-          flex: 3,
-          child: Column(children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  ElevatedButton(
-                      onPressed: () async {
-                        showModalSideSheet(
-                          context,
-                          header: 'Extend my Text',
-                          body: FutureBuilder(
-                              future: extendChapterRequest(chapters[_index][0]
-                                      ['nodes'][1]['textAt']
-                                  .text),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  return ListView.builder(
-                                      itemCount: 2,
-                                      itemBuilder: ((context, index) {
-                                        if (snapshot.data != null) {
-                                          print(snapshot.data);
-
-                                          var response =
-                                              jsonDecode(snapshot.data);
-                                          return GestureDetector(
-                                              onTap: () {
-                                                chapters[_index][0]['nodes']
-                                                    .add({
-                                                  'typeAt': SmartTextType.T,
-                                                  'textAt':
-                                                      TextEditingController(),
-                                                  'nodeAt': FocusNode(),
-                                                });
-
-                                                chapters[_index][0]['nodes']
-                                                        .last['textAt']
-                                                        .text =
-                                                    response['context']
-                                                        ['opt${index + 1}'];
-
-                                                Navigator.pop(context);
-                                              },
-                                              child: Card(
-                                                  child: Text(response[
-                                                              'context']
-                                                          ['opt${index + 1}']
-                                                      .toString())));
-                                        }
-                                      }));
-                                } else {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              }),
-                          addBackIconButton: true,
-                          addActions: true,
-                          addDivider: true,
-                          confirmActionTitle: 'Save',
-                          cancelActionTitle: 'Cancel',
-                          confirmActionOnPressed: () {},
-
-                          // If null, Navigator.pop(context) will used
-                          cancelActionOnPressed: () {
-                            // Do something
-                          },
-                          transitionDuration: Duration(milliseconds: 100),
-                        );
-                      },
-                      child: Text('I\'m Stuck')),
-                  ElevatedButton(onPressed: () {}, child: Text('Continue')),
-                  ElevatedButton(onPressed: () {}, child: Text('Other API')),
-                  ElevatedButton(
-                      onPressed: () async {
-                        showModalSideSheet(
-                          context,
-                          header: 'Fact Check My Document',
-                          body: FutureBuilder(
-                              future: factCheckRequest(chapters[_index][0]
-                                      ['nodes'][1]['textAt']
-                                  .text),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  return ListView.builder(
-                                      itemCount: snapshot.data.length,
-                                      itemBuilder: ((context, index) {
-                                        if (snapshot.data != null) {
-                                          print(snapshot.data);
-                                          Map valueMap =
-                                              jsonDecode(snapshot.data[index]);
-
-                                          print(valueMap.keys.toString());
-                                          print(valueMap);
-                                          return ListTile(
-                                            title: Text(
-                                                valueMap['claim'].toString()),
-                                            subtitle: Text(
-                                                valueMap['justification'][0]
-                                                        ['truth_rating']
-                                                    .toString()),
-                                          );
-                                        }
-                                      }));
-                                } else {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              }),
-                          addBackIconButton: true,
-                          addActions: true,
-                          addDivider: true,
-                          confirmActionTitle: 'Save',
-                          cancelActionTitle: 'Cancel',
-                          confirmActionOnPressed: () {},
-
-                          // If null, Navigator.pop(context) will used
-                          cancelActionOnPressed: () {
-                            // Do something
-                          },
-                          transitionDuration: Duration(milliseconds: 100),
-                        );
-                      },
-                      child: Text('Fact Check'))
-                ],
-              ),
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: chapters[_index][0]['nodes'].length,
-                itemBuilder: (context, index) {
-                  return MouseRegion(
-                      onHover: (event) {
-                        setState(() {
-                          _hoverColor =
-                              const Color.fromARGB(255, 251, 255, 255);
-                        });
-                      },
-                      child: Container(
-                          color: _hoverColor,
-                          child: SmartTextField(
-                              type: chapters[_index][0]['nodes'][index]
-                                  ['typeAt'],
-                              onAction: () {
-                                print(chapters[_index][0]['nodes']);
-
-                                setState(() {
-                                  chapters[_index][0]['nodes'].add({
-                                    'typeAt': SmartTextType.T,
-                                    'textAt': TextEditingController(),
-                                    'nodeAt': FocusNode(),
-                                  });
-                                });
-                                print(chapters[_index][0]['nodes']);
+                            'chapter_number': chapters.length + 1,
+                            'nodes': [
+                              {
+                                'typeAt': SmartTextType.H1,
+                                'textAt': TextEditingController(),
+                                'nodeAt': FocusNode(),
                               },
-                              controller: chapters[_index][0]['nodes'][index]
-                                  ['textAt'],
-                              focusNode: chapters[_index][0]['nodes'][index]
-                                  ['nodeAt'])));
-                }),
-            Center(
-                child: Card(
-              child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                  child: Wrap(
+                              {
+                                'typeAt': SmartTextType.T,
+                                'textAt': TextEditingController(),
+                                'nodeAt': FocusNode(),
+                              }
+                            ],
+                          }
+                        ]);
+                      });
+                    },
+                  ))),
+          Expanded(
+              flex: 3,
+              child: Column(children: [
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
                     children: [
-                      Text('H2'),
-                      SizedBox(
-                        height: 20,
-                        child: VerticalDivider(
-                            width: 20, thickness: 1, color: Colors.black),
-                      ),
-                      Text('Paragraph')
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  5), // Set the button shape
+                            ),
+                          ),
+                          onPressed: () async {
+                            showModalSideSheet(
+                              context,
+                              header: 'Extend my Text',
+                              body: FutureBuilder(
+                                  future: extendChapterRequest(chapters[_index]
+                                          [0]['nodes'][1]['textAt']
+                                      .text),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return ListView.builder(
+                                          itemCount: 2,
+                                          itemBuilder: ((context, index) {
+                                            if (snapshot.data != null) {
+                                              print(snapshot.data);
+
+                                              var response =
+                                                  jsonDecode(snapshot.data);
+                                              return GestureDetector(
+                                                  onTap: () {
+                                                    chapters[_index][0]['nodes']
+                                                        .add({
+                                                      'typeAt': SmartTextType.T,
+                                                      'textAt':
+                                                          TextEditingController(),
+                                                      'nodeAt': FocusNode(),
+                                                    });
+
+                                                    chapters[_index][0]['nodes']
+                                                            .last['textAt']
+                                                            .text =
+                                                        response['context']
+                                                            ['opt${index + 1}'];
+
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Container(
+                                                      child: Column(children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            'Option ${index + 1}',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 15))
+                                                      ],
+                                                    ),
+                                                    Row(children: [
+                                                      Text(response['context'][
+                                                              'opt${index + 1}']
+                                                          .toString())
+                                                    ])
+                                                  ])));
+                                            }
+                                          }));
+                                    } else {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  }),
+                              addBackIconButton: true,
+                              addActions: true,
+                              addDivider: true,
+                              confirmActionTitle: 'Save',
+                              cancelActionTitle: 'Cancel',
+                              confirmActionOnPressed: () {},
+
+                              // If null, Navigator.pop(context) will used
+                              cancelActionOnPressed: () {
+                                // Do something
+                              },
+                              transitionDuration: Duration(milliseconds: 100),
+                            );
+                          },
+                          child: Text('I\'m Stuck')),
+                      SizedBox(width: 10),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  5), // Set the button shape
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: Text('Continue')),
+                      SizedBox(width: 10),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  5), // Set the button shape
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: Text('Other API')),
+                      SizedBox(width: 10),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  5), // Set the button shape
+                            ),
+                          ),
+                          onPressed: () async {
+                            showModalSideSheet(
+                              context,
+                              header: 'Fact Check My Document',
+                              body: FutureBuilder(
+                                  future: factCheckRequest(chapters[_index][0]
+                                          ['nodes'][1]['textAt']
+                                      .text),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return ListView.builder(
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: ((context, index) {
+                                            if (snapshot.data != null) {
+                                              print(snapshot.data);
+                                              Map valueMap = jsonDecode(
+                                                  snapshot.data[index]);
+
+                                              print(valueMap.keys.toString());
+                                              print(valueMap);
+                                              return ListTile(
+                                                title: Text(valueMap['claim']
+                                                    .toString()),
+                                                subtitle: Text(
+                                                    valueMap['justification'][0]
+                                                            ['truth_rating']
+                                                        .toString()),
+                                              );
+                                            }
+                                          }));
+                                    } else {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  }),
+                              addBackIconButton: true,
+                              addActions: true,
+                              addDivider: true,
+                              confirmActionTitle: 'Save',
+                              cancelActionTitle: 'Cancel',
+                              confirmActionOnPressed: () {},
+
+                              // If null, Navigator.pop(context) will used
+                              cancelActionOnPressed: () {
+                                // Do something
+                              },
+                              transitionDuration: Duration(milliseconds: 100),
+                            );
+                          },
+                          child: Text('Fact Check'))
                     ],
-                  )),
-            ))
-          ])),
-    ])));
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: chapters[_index][0]['nodes'].length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                            child: SmartTextField(
+                                type: chapters[_index][0]['nodes'][index]
+                                    ['typeAt'],
+                                onAction: () {
+                                  print(chapters[_index][0]['nodes']);
+
+                                  setState(() {
+                                    chapters[_index][0]['nodes'].add({
+                                      'typeAt': SmartTextType.T,
+                                      'textAt': TextEditingController(),
+                                      'nodeAt': FocusNode(),
+                                    });
+                                  });
+                                  print(chapters[_index][0]['nodes']);
+                                },
+                                controller: chapters[_index][0]['nodes'][index]
+                                    ['textAt'],
+                                focusNode: chapters[_index][0]['nodes'][index]
+                                    ['nodeAt']));
+                      }),
+                ),
+                Center(
+                    child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border:
+                          Border.all(color: Color.fromRGBO(236, 234, 240, 1))),
+                  child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 5),
+                      child: Wrap(
+                        children: [
+                          TextButton(onPressed: () {}, child: Text('H2')),
+                          SizedBox(
+                            height: 30,
+                            child: VerticalDivider(
+                                width: 20,
+                                thickness: 1,
+                                color: Color.fromRGBO(236, 238, 240, 1)),
+                          ),
+                          TextButton(
+                              onPressed: () {}, child: Text('Paragraph')),
+                        ],
+                      )),
+                ))
+              ])),
+        ])));
   }
 }
 

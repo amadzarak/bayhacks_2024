@@ -51,7 +51,7 @@ class _PromptHistoryState extends State<PromptHistory> {
       Row(children: [
         Expanded(
           child: Container(
-              color: Color.fromARGB(255, 245, 239, 255),
+              color: Colors.white,
               padding: EdgeInsets.all(10.0),
               child: TextButton(
                   child: Text('+ Add Chapter'),
