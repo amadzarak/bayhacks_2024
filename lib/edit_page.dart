@@ -171,25 +171,102 @@ class _TextEditorState extends State<TextEditor> {
 
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Container(
-                                                      child: Column(children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            'Option ${index + 1}',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 15))
-                                                      ],
-                                                    ),
-                                                    Row(children: [
-                                                      Text(response['context'][
-                                                              'opt${index + 1}']
-                                                          .toString())
-                                                    ])
-                                                  ])));
+                                                  child: Column(children: [
+                                                    Container(
+                                                        margin: const EdgeInsets
+                                                            .fromLTRB(
+                                                            20, 0, 20, 0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border(
+                                                              top: BorderSide(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          230,
+                                                                          232,
+                                                                          235,
+                                                                          1),
+                                                                  width: 1),
+                                                              left: BorderSide(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          230,
+                                                                          232,
+                                                                          235,
+                                                                          1),
+                                                                  width: 1),
+                                                              right: BorderSide(
+                                                                  color:
+                                                                      Color.fromRGBO(
+                                                                          230,
+                                                                          232,
+                                                                          235,
+                                                                          1),
+                                                                  width: 1)),
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                        ),
+                                                        child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    top: 15,
+                                                                    bottom: 15),
+                                                            child: Row(
+                                                              children: [
+                                                                Text(
+                                                                    'Option ${index + 1}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w500,
+                                                                        fontSize:
+                                                                            15))
+                                                              ],
+                                                            ))),
+                                                    Container(
+                                                        width: double.infinity,
+                                                        margin: const EdgeInsets
+                                                            .fromLTRB(
+                                                            20, 0, 20, 10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border.all(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      230,
+                                                                      232,
+                                                                      235,
+                                                                      1),
+                                                              width: 1),
+                                                          borderRadius:
+                                                              BorderRadius.vertical(
+                                                                  bottom: Radius
+                                                                      .circular(
+                                                                          5.0)),
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                        ),
+                                                        child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              top: 15,
+                                                              left: 20,
+                                                              right: 10,
+                                                              bottom: 20,
+                                                            ),
+                                                            child: Wrap(
+                                                                children: [
+                                                                  Text(response[
+                                                                              'context']
+                                                                          [
+                                                                          'opt${index + 1}']
+                                                                      .toString())
+                                                                ]))),
+                                                  ]));
                                             }
                                           }));
                                     } else {
