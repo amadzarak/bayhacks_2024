@@ -417,26 +417,74 @@ class _TextEditorState extends State<TextEditor> {
                       shrinkWrap: true,
                       itemCount: chapters[_index][0]['nodes'].length,
                       itemBuilder: (context, index) {
-                        return Container(
-                            child: SmartTextField(
-                                type: chapters[_index][0]['nodes'][index]
-                                    ['typeAt'],
-                                onAction: () {
-                                  print(chapters[_index][0]['nodes']);
+                        return Row(children: [
+                          Expanded(
+                              flex: 3,
+                              child: Container(
+                                  child: SmartTextField(
+                                      type: chapters[_index][0]['nodes'][index]
+                                          ['typeAt'],
+                                      onAction: () {
+                                        print(chapters[_index][0]['nodes']);
 
-                                  setState(() {
-                                    chapters[_index][0]['nodes'].add({
-                                      'typeAt': SmartTextType.T,
-                                      'textAt': TextEditingController(),
-                                      'nodeAt': FocusNode(),
+                                        setState(() {
+                                          chapters[_index][0]['nodes'].add({
+                                            'typeAt': SmartTextType.T,
+                                            'textAt': TextEditingController(),
+                                            'nodeAt': FocusNode(),
+                                          });
+                                        });
+                                        print(chapters[_index][0]['nodes']);
+                                      },
+                                      controller: chapters[_index][0]['nodes']
+                                          [index]['textAt'],
+                                      focusNode: chapters[_index][0]['nodes']
+                                          [index]['nodeAt']))),
+                          Builder(builder: (context) {
+                            if (chapters[_index][0]['nodes'][index]['typeAt'] ==
+                                SmartTextType.H1) {
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      chapters[_index][0]['nodes'][index]
+                                          ['typeAt'] = SmartTextType.T;
                                     });
-                                  });
-                                  print(chapters[_index][0]['nodes']);
-                                },
-                                controller: chapters[_index][0]['nodes'][index]
-                                    ['textAt'],
-                                focusNode: chapters[_index][0]['nodes'][index]
-                                    ['nodeAt']));
+                                  },
+                                  icon: Icon(Icons.title));
+                            } else if (chapters[_index][0]['nodes'][index]
+                                    ['typeAt'] ==
+                                SmartTextType.T) {
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      chapters[_index][0]['nodes'][index]
+                                          ['typeAt'] = SmartTextType.BULLET;
+                                    });
+                                  },
+                                  icon: Icon(Icons.abc));
+                            } else if (chapters[_index][0]['nodes'][index]
+                                    ['typeAt'] ==
+                                SmartTextType.BULLET) {
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      chapters[_index][0]['nodes'][index]
+                                          ['typeAt'] = SmartTextType.H1;
+                                    });
+                                  },
+                                  icon: Icon(Icons.format_list_bulleted));
+                            } else {
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      chapters[_index][0]['nodes'][index]
+                                          ['typeAt'] = SmartTextType.H1;
+                                    });
+                                  },
+                                  icon: Icon(Icons.abc));
+                            }
+                          })
+                        ]);
                       }),
                 ),
                 Row(children: [ActionBar()]),
