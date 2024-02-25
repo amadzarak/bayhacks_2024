@@ -2,21 +2,29 @@ import 'package:flutter/material.dart';
 
 enum SmartTextType { H1, T, QUOTE, BULLET }
 
+typedef void SmartTextInputAction();
+
 class SmartTextField extends StatelessWidget {
-  const SmartTextField(
+  SmartTextField(
       {Key? key,
       required this.type,
       required this.controller,
-      required this.focusNode})
+      required this.focusNode,
+      this.onAction})
       : super(key: key);
 
   final SmartTextType type;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final SmartTextInputAction? onAction;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+        onSubmitted: (value) {
+          onAction!();
+        },
+        textInputAction: TextInputAction.search,
         controller: controller,
         focusNode: focusNode,
         autofocus: true,
@@ -28,7 +36,7 @@ class SmartTextField extends StatelessWidget {
             hintText: (type) {
               switch (type) {
                 case SmartTextType.H1:
-                  return 'Chapter Title';
+                  return 'Heading 1';
                   break;
                 case SmartTextType.QUOTE:
                   return 'Quote';
@@ -37,7 +45,7 @@ class SmartTextField extends StatelessWidget {
                   return 'Bullet';
                   break;
                 default:
-                  return 'Body Text';
+                  return 'Paragraph';
               }
             }(type),
             border: InputBorder.none,

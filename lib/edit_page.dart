@@ -198,7 +198,7 @@ class _TextEditorState extends State<TextEditor> {
             Expanded(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: defaultMap[0].length,
+                    itemCount: chapters[_index][0]['nodes'].length,
                     itemBuilder: (context, index) {
                       return MouseRegion(
                           onHover: (event) {
@@ -212,6 +212,18 @@ class _TextEditorState extends State<TextEditor> {
                               child: SmartTextField(
                                   type: chapters[_index][0]['nodes'][index]
                                       ['typeAt'],
+                                  onAction: () {
+                                    print(chapters[_index][0]['nodes']);
+
+                                    setState(() {
+                                      chapters[_index][0]['nodes'].add({
+                                        'typeAt': SmartTextType.T,
+                                        'textAt': TextEditingController(),
+                                        'nodeAt': FocusNode(),
+                                      });
+                                    });
+                                    print(chapters[_index][0]['nodes']);
+                                  },
                                   controller: chapters[_index][0]['nodes']
                                       [index]['textAt'],
                                   focusNode: chapters[_index][0]['nodes'][index]
