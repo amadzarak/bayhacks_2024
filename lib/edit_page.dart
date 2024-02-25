@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 var url = Uri.https('example.com', 'whatsit/create');
 
@@ -371,7 +372,43 @@ class _TextEditorState extends State<TextEditor> {
                               transitionDuration: Duration(milliseconds: 100),
                             );
                           },
-                          child: Text('Fact Check'))
+                          child: Text('Fact Check')),
+                      SizedBox(width: 10),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  5), // Set the button shape
+                            ),
+                          ),
+                          onPressed: () {
+                            RegExp re = new RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
+                            List newNodes = [chapters[_index][0]['nodes'][0]];
+                            for (var x in chapters[_index][0]['nodes']) {
+                              print(x['textAt'].text);
+                              Iterable matches =
+                                  re.allMatches(x['textAt'].text);
+                              for (Match m in matches) {
+                                String? match = m.group(0);
+                                newNodes.add({
+                                  'typeAt': SmartTextType.T,
+                                  'textAt': TextEditingController(text: match),
+                                  'nodeAt': FocusNode(),
+                                });
+                                newNodes.add({
+                                  'typeAt': SmartTextType.BREAK,
+                                  'textAt': TextEditingController(),
+                                  'nodeAt': FocusNode(),
+                                });
+                              }
+                            }
+
+                            setState(() {
+                              chapters[_index][0]['nodes'] = newNodes;
+                            });
+                          },
+                          child: Text('Break Entire File')),
                     ],
                   ),
                 ),
@@ -402,30 +439,7 @@ class _TextEditorState extends State<TextEditor> {
                                     ['nodeAt']));
                       }),
                 ),
-                Center(
-                    child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border:
-                          Border.all(color: Color.fromRGBO(236, 234, 240, 1))),
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 5),
-                      child: Wrap(
-                        children: [
-                          TextButton(onPressed: () {}, child: Text('H2')),
-                          SizedBox(
-                            height: 30,
-                            child: VerticalDivider(
-                                width: 20,
-                                thickness: 1,
-                                color: Color.fromRGBO(236, 238, 240, 1)),
-                          ),
-                          TextButton(
-                              onPressed: () {}, child: Text('Paragraph')),
-                        ],
-                      )),
-                ))
+                Row(children: [ActionBar()]),
               ])),
         ])));
   }
@@ -479,4 +493,31 @@ Future extendChapterRequest(String paragraphText) async {
   }
 
   return [];
+}
+
+class ActionBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: Color.fromRGBO(236, 234, 240, 1))),
+      child: Padding(
+          padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+          child: Wrap(
+            children: [
+              TextButton(onPressed: () {}, child: Text('H2')),
+              SizedBox(
+                height: 30,
+                child: VerticalDivider(
+                    width: 20,
+                    thickness: 1,
+                    color: Color.fromRGBO(236, 238, 240, 1)),
+              ),
+              TextButton(onPressed: () {}, child: Text('Paragraph')),
+            ],
+          )),
+    ));
+  }
 }

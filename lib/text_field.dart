@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum SmartTextType { H1, T, QUOTE, BULLET }
+enum SmartTextType { H1, T, QUOTE, BULLET, BREAK }
 
 typedef void SmartTextInputAction();
 
@@ -43,6 +43,9 @@ class SmartTextField extends StatelessWidget {
                   break;
                 case SmartTextType.BULLET:
                   return 'Bullet';
+                  break;
+                case SmartTextType.BREAK:
+                  return '';
                   break;
                 default:
                   return 'Paragraph';
